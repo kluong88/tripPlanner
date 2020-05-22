@@ -1,39 +1,49 @@
-const forms = document.querySelectorAll(`form`);
-const inputs = document.querySelectorAll(`input`);
 const mapBoxApiKey = `pk.eyJ1Ijoia2x1b25nODgiLCJhIjoiY2thNWlsejBzMDBpaTNkcWYwZ3VmbjF0ZCJ9.Dt-l5W_looV6UXMeDr905w`;
-const transitApiKey = `BbxBNg96RH903JTtJFdZ`;
+const originContainer = document.querySelector(`.origin-container`);
+const destinationContainer = document.querySelector(`.destination-container`);
+const destinationsList = document.querySelector(`.destinations`);
 const boundBox = `-97.325875,49.766204,-96.953987,49.99275`;
 const originsList = document.querySelector(`.origins`);
-const destinationsList = document.querySelector(`.destinations`);
-const originContainer = document.querySelector(`.origin-container`);
+const inputs = document.querySelectorAll(`input`);
+const forms = document.querySelectorAll(`form`);
 const listEle = document.querySelectorAll(`li`);
-const selected = document.querySelector(`li.selected`);
+const transitApiKey = `BbxBNg96RH903JTtJFdZ`;
 
 for (const form of forms) {
   form.onsubmit = event => {
     if (event.target.className === `origin-form`) {
       getSearchResults(inputs[0].value, `originsList`);
-      originsList.innerHTML = ``
+      originsList.innerHTML = ``;
       inputs[0].value = ``;
     } else {
       getSearchResults(inputs[1].value, `destinationsList`);
-      destinationsList.innerHTML = ``
+      destinationsList.innerHTML = ``;
       inputs[1].value = ``;
     }
     event.preventDefault();
-  }
-}
+  };
+};
 
 
 originContainer.onclick = event => {
+  const originsEle = originsList.querySelectorAll(`li`);
   if (event.target.closest(`LI`)) {
-    listEle.forEach(element => {
-      element.className = ``;
-    })
-    console.log(`hi`);
+    originsEle.forEach(element => element.className = ` `);
+
     event.target.closest(`LI`).classList.add(`selected`);
   }
 };
+
+destinationContainer.onclick = event => {
+  const destinationEle = destinationsList.querySelectorAll(`li`);
+  if (event.target.closest(`LI`)) {
+    destinationEle.forEach(element => element.className = ` `);
+
+    event.target.closest(`LI`).classList.add(`selected`);
+  }
+};
+
+
 
 
 function getSearchResults(searchValue, list) {
