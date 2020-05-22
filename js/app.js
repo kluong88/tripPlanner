@@ -1,6 +1,6 @@
 const mapBoxApiKey = `pk.eyJ1Ijoia2x1b25nODgiLCJhIjoiY2thNWlsejBzMDBpaTNkcWYwZ3VmbjF0ZCJ9.Dt-l5W_looV6UXMeDr905w`;
-const originContainer = document.querySelector(`.origin-container`);
 const destinationContainer = document.querySelector(`.destination-container`);
+const originContainer = document.querySelector(`.origin-container`);
 const destinationsList = document.querySelector(`.destinations`);
 const boundBox = `-97.325875,49.766204,-96.953987,49.99275`;
 const originsList = document.querySelector(`.origins`);
@@ -8,6 +8,8 @@ const inputs = document.querySelectorAll(`input`);
 const forms = document.querySelectorAll(`form`);
 const listEle = document.querySelectorAll(`li`);
 const transitApiKey = `BbxBNg96RH903JTtJFdZ`;
+const body = document.querySelector(`body`);
+const planTripBtn = document.querySelector(`button`);
 
 for (const form of forms) {
   form.onsubmit = event => {
@@ -24,24 +26,40 @@ for (const form of forms) {
   };
 };
 
-
-originContainer.onclick = event => {
+body.onclick = event => {
   const originsEle = originsList.querySelectorAll(`li`);
-  if (event.target.closest(`LI`)) {
+  const destinationEle = destinationsList.querySelectorAll(`li`);
+  let originLat = 0;
+  let originLong = 0;
+  let destinationLat = 0;
+  let destinationLong = 0;
+
+  if (event.target.closest(`LI`) && event.target.closest(`UL`).className === `origins`) {
     originsEle.forEach(element => element.className = ` `);
     event.target.closest(`LI`).classList.add(`selected`);
-    console.log(event.target.closest(`LI`).dataset);
+    originLat = event.target.closest(`LI`).dataset.lat;
+    originLong = event.target.closest(`LI`).dataset.long;
+
+  } else if (event.target.closest(`LI`) && event.target.closest(`UL`).className === `destinations`) {
+    destinationEle.forEach(element => element.className = ` `);
+    event.target.closest(`LI`).classList.add(`selected`);
+    destinationLat = event.target.closest(`LI`).dataset.lat;
+    destinationLong = event.target.closest(`LI`).dataset.long;
   }
 };
 
-destinationContainer.onclick = event => {
-  const destinationEle = destinationsList.querySelectorAll(`li`);
-  if (event.target.closest(`LI`)) {
-    destinationEle.forEach(element => element.className = ` `);
-    event.target.closest(`LI`).classList.add(`selected`);
-    console.log(event.target.closest(`LI`).dataset);
+planTripBtn.onclick = event => {
+  const selected = document.querySelectorAll(`li.selected`);
+
+  if (selected.length === 2) {
+    console.log(selected[0].dataset);
+
+    console.log(`hi`);
+  } else {
+    console.log(`Please select an origin and destination`);
   }
-};
+}
+
 
 
 
@@ -49,10 +67,10 @@ destinationContainer.onclick = event => {
 function getSearchResults(searchValue, list) {
   fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${searchValue}.json?access_token=${mapBoxApiKey}&limit=10&bbox=${boundBox}`)
     .then(resp => resp.json())
-    .then(search => {
-
-      search.features.forEach(result => {
+    .then(results => {
+      results.features.forEach(result => {
         displayResults(result, list);
+
       })
     })
 
