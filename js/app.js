@@ -29,8 +29,8 @@ originContainer.onclick = event => {
   const originsEle = originsList.querySelectorAll(`li`);
   if (event.target.closest(`LI`)) {
     originsEle.forEach(element => element.className = ` `);
-
     event.target.closest(`LI`).classList.add(`selected`);
+    console.log(event.target.closest(`LI`).dataset);
   }
 };
 
@@ -38,8 +38,8 @@ destinationContainer.onclick = event => {
   const destinationEle = destinationsList.querySelectorAll(`li`);
   if (event.target.closest(`LI`)) {
     destinationEle.forEach(element => element.className = ` `);
-
     event.target.closest(`LI`).classList.add(`selected`);
+    console.log(event.target.closest(`LI`).dataset);
   }
 };
 
@@ -62,14 +62,14 @@ function displayResults(searchResults, list) {
 
   if (list === `originsList`) {
     originsList.insertAdjacentHTML(`beforeend`, `
-  <li data-long="-97.19167" data-lat="49.815176" class="">
+  <li data-long="${searchResults.geometry.coordinates[0]}" data-lat="${searchResults.geometry.coordinates[1]}" class="">
   <div class="name">${searchResults.text}</div>
   <div>${searchResults.properties.address}</div>
 </li>  
   `)
   } else {
     destinationsList.insertAdjacentHTML(`beforeend`, `
-    <li data-long="-97.19167" data-lat="49.815176" class="">
+    <li data-long="${searchResults.geometry.coordinates[0]}" data-lat="${searchResults.geometry.coordinates[1]}" class="">
     <div class="name">${searchResults.text}</div>
     <div>${searchResults.properties.address}</div>
   </li>  
