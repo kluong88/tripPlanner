@@ -29,10 +29,7 @@ for (const form of forms) {
 body.onclick = event => {
   const originsEle = originsList.querySelectorAll(`li`);
   const destinationEle = destinationsList.querySelectorAll(`li`);
-  let originLat = 0;
-  let originLong = 0;
-  let destinationLat = 0;
-  let destinationLong = 0;
+
 
   if (event.target.closest(`LI`) && event.target.closest(`UL`).className === `origins`) {
     originsEle.forEach(element => element.className = ` `);
@@ -50,11 +47,14 @@ body.onclick = event => {
 
 planTripBtn.onclick = event => {
   const selected = document.querySelectorAll(`li.selected`);
-
   if (selected.length === 2) {
-    console.log(selected[0].dataset);
 
-    console.log(`hi`);
+    fetch(`https://api.winnipegtransit.com/v3/trip-planner.json?origin=geo/${selected[0].dataset.lat},${selected[0].dataset.long}&api-key=ZPFv2Zx6ny1KrlPKnfe&destination=geo/${selected[1].dataset.lat},${selected[1].dataset.long}`)
+      .then(resp => resp.json())
+      .then(directions => {
+
+        console.log(directions);
+      })
   } else {
     console.log(`Please select an origin and destination`);
   }
