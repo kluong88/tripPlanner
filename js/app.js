@@ -30,18 +30,12 @@ body.onclick = event => {
   const originsEle = originsList.querySelectorAll(`li`);
   const destinationEle = destinationsList.querySelectorAll(`li`);
 
-
   if (event.target.closest(`LI`) && event.target.closest(`UL`).className === `origins`) {
     originsEle.forEach(element => element.className = ` `);
     event.target.closest(`LI`).classList.add(`selected`);
-    originLat = event.target.closest(`LI`).dataset.lat;
-    originLong = event.target.closest(`LI`).dataset.long;
-
   } else if (event.target.closest(`LI`) && event.target.closest(`UL`).className === `destinations`) {
     destinationEle.forEach(element => element.className = ` `);
     event.target.closest(`LI`).classList.add(`selected`);
-    destinationLat = event.target.closest(`LI`).dataset.lat;
-    destinationLong = event.target.closest(`LI`).dataset.long;
   }
 };
 
@@ -60,24 +54,17 @@ planTripBtn.onclick = event => {
   }
 }
 
-
-
-
-
 function getSearchResults(searchValue, list) {
   fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${searchValue}.json?access_token=${mapBoxApiKey}&limit=10&bbox=${boundBox}`)
     .then(resp => resp.json())
     .then(results => {
       results.features.forEach(result => {
         displayResults(result, list);
-
       })
     })
-
 };
 
 function displayResults(searchResults, list) {
-
   if (list === `originsList`) {
     originsList.insertAdjacentHTML(`beforeend`, `
   <li data-long="${searchResults.geometry.coordinates[0]}" data-lat="${searchResults.geometry.coordinates[1]}" class="">
