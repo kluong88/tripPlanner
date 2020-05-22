@@ -42,13 +42,13 @@ function getSearchResults(searchValue, list) {
     .then(search => {
 
       search.features.forEach(result => {
-        updateSearch(result, list);
+        displayResults(result, list);
       })
     })
 
 };
 
-function updateSearch(searchResults, list) {
+function displayResults(searchResults, list) {
 
   if (list === `originsList`) {
     originsList.insertAdjacentHTML(`beforeend`, `
@@ -57,7 +57,7 @@ function updateSearch(searchResults, list) {
   <div>${searchResults.properties.address}</div>
 </li>  
   `)
-  } else if (list === `destinationsList`) {
+  } else {
     destinationsList.insertAdjacentHTML(`beforeend`, `
     <li data-long="-97.19167" data-lat="49.815176" class="">
     <div class="name">${searchResults.text}</div>
