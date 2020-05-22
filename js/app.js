@@ -9,26 +9,23 @@ const originContainer = document.querySelector(`.origin-container`);
 const listEle = document.querySelectorAll(`li`);
 const selected = document.querySelector(`li.selected`);
 
-
-
 for (const form of forms) {
   form.onsubmit = event => {
     if (event.target.className === `origin-form`) {
-      searchOrigin(inputs[0].value);
+      getSearchResults(inputs[0].value, `originsList`);
       originsList.innerHTML = ``
       inputs[0].value = ``;
     } else {
-      searchDestination(inputs[1].value);
+      getSearchResults(inputs[1].value, `destinationsList`);
       destinationsList.innerHTML = ``
-
       inputs[1].value = ``;
     }
     event.preventDefault();
   }
 }
 
-originContainer.onclick = event => {
 
+originContainer.onclick = event => {
   if (event.target.closest(`LI`)) {
     listEle.forEach(element => {
       element.className = ``;
@@ -36,53 +33,36 @@ originContainer.onclick = event => {
     console.log(`hi`);
     event.target.closest(`LI`).classList.add(`selected`);
   }
+};
 
-}
 
-
-function searchOrigin(searchValue) {
+function getSearchResults(searchValue, list) {
   fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${searchValue}.json?access_token=${mapBoxApiKey}&limit=10&bbox=${boundBox}`)
     .then(resp => resp.json())
-    .then(originSearch => {
+    .then(search => {
 
-      originSearch.features.forEach(result => {
-        updateOriginSearch(result);
+      search.features.forEach(result => {
+        updateSearch(result, list);
       })
     })
 
 };
 
-function updateOriginSearch(searchResults) {
+function updateSearch(searchResults, list) {
 
-  originsList.insertAdjacentHTML(`beforeend`, `
+  if (list === `originsList`) {
+    originsList.insertAdjacentHTML(`beforeend`, `
   <li data-long="-97.19167" data-lat="49.815176" class="">
   <div class="name">${searchResults.text}</div>
   <div>${searchResults.properties.address}</div>
 </li>  
   `)
+  } else if (list === `destinationsList`) {
+    destinationsList.insertAdjacentHTML(`beforeend`, `
+    <li data-long="-97.19167" data-lat="49.815176" class="">
+    <div class="name">${searchResults.text}</div>
+    <div>${searchResults.properties.address}</div>
+  </li>  
+    `)
+  }
 }
-
-function updateDestinationSearch(searchResults) {
-  destinationsList.insertAdjacentHTML(`beforeend`, `
-  <li data-long="-97.19167" data-lat="49.815176" class="">
-  <div class="name">${searchResults.text}</div>
-  <div>${searchResults.properties.address}</div>
-</li>  
-  `)
-
-
-}
-
-function searchDestination(searchValue) {
-  fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${searchValue}.json?access_token=${mapBoxApiKey}&limit=10&bbox=${boundBox}`)
-    .then(resp => resp.json())
-    .then(destinationSearch => {
-
-      destinationSearch.features.forEach(result => {
-        updateDestinationSearch(result);
-      })
-    })
-
-
-
-};
