@@ -2,7 +2,6 @@ const destinationsList = document.querySelector(`.destinations`);
 const originsList = document.querySelector(`.origins`);
 const inputs = document.querySelectorAll(`input`);
 const forms = document.querySelectorAll(`form`);
-const listEle = document.querySelectorAll(`li`);
 const body = document.querySelector(`body`);
 const planTripBtn = document.querySelector(`button`);
 
@@ -18,6 +17,37 @@ for (const form of forms) {
       inputs[1].value = ``;
     }
     event.preventDefault();
+  };
+};
+
+function getSearchResults(searchValue, list) {
+  const mapBoxApiKey = `pk.eyJ1Ijoia2x1b25nODgiLCJhIjoiY2thNWlsejBzMDBpaTNkcWYwZ3VmbjF0ZCJ9.Dt-l5W_looV6UXMeDr905w`;
+  const boundBox = `-97.325875,49.766204,-96.953987,49.99275`;
+
+  fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${searchValue}.json?access_token=${mapBoxApiKey}&limit=10&bbox=${boundBox}`)
+    .then(resp => resp.json())
+    .then(results => {
+      results.features.forEach(result => {
+        displayResults(result, list);
+      });
+    });
+};
+
+function displayResults(searchResults, list) {
+  if (list === `originsList`) {
+    originsList.insertAdjacentHTML(`beforeend`, `
+  <li data-long="${searchResults.geometry.coordinates[0]}" data-lat="${searchResults.geometry.coordinates[1]}" class="">
+    <div class="name">${searchResults.text}</div>
+   <div>${searchResults.properties.address}</div>
+  </li>  
+  `)
+  } else {
+    destinationsList.insertAdjacentHTML(`beforeend`, `
+    <li data-long="${searchResults.geometry.coordinates[0]}" data-lat="${searchResults.geometry.coordinates[1]}" class="">
+      <div class="name">${searchResults.text}</div>
+      <div>${searchResults.properties.address}</div>
+    </li>  
+    `)
   };
 };
 
@@ -51,56 +81,23 @@ planTripBtn.onclick = event => {
 };
 
 function getDirections(directions) {
+  const myTrip = document.querySelector(`.my-trip`);
 
   directions.plans[0].segments.forEach(plan => {
-    // const startTime = new Date(plan.times.start);
-    // const endTime = new Date(plan.times.end);
-    // const timeElapsed = (endTime.getMinutes() - startTime.getMinutes());
-
     if (plan.type === `walk` && plan.to.stop != undefined) {
-      console.log(plan);
-      console.log(`Walk ${plan.times.durations.walking} minutes to stop #${plan.to.stop.key} - ${plan.to.stop.name} `)
+      myTrip.insertAdjacentHTML(`beforeend`, `
+      <li><i class="fas fa-walking" aria-hidden="true"></i>Walk for ${plan.times.durations.walking} minutes to stop #${plan.to.stop.key} - ${plan.to.stop.name}</li>
+      `)
     } else if (plan.type === `walk` && plan.to.stop === undefined) {
-      console.log(plan);
-      console.log(`Walk ${plan.times.durations.walking} minutes to your destination.`)
+      myTrip.insertAdjacentHTML(`beforeend`, `
+      <li><i class="fas fa-walking" aria-hidden="true"></i>Walk for ${plan.times.durations.walking} minutes to your destination.</li>
+      `)
     } else if (plan.type === `transfer`) {
-      console.log(plan);
-      console.log(`Transfer from stop #${plan.from.stop.key} - ${plan.from.stop.name} to stop #${plan.to.stop.key} - ${plan.to.stop.name}.`)
+      myTrip.insertAdjacentHTML(`beforeend`, `
+      <li><i class="fas fa-ticket-alt" aria-hidden="true"></i>Transfer from stop #${plan.from.stop.key} - ${plan.from.stop.name} to stop #${plan.to.stop.key} - ${plan.to.stop.name}.</li>`)
     } else if (plan.type === `ride`) {
-      console.log(plan);
-      console.log(`Ride the ${plan.route.name} for ${plan.times.durations.riding} minutes.`)
+      myTrip.insertAdjacentHTML(`beforened`, `
+      <li><i class="fas fa-bus" aria-hidden="true"></i>Ride the ${plan.route.name} for ${plan.times.durations.riding} minutes.</li>`)
     }
-  })
-
-};
-
-function getSearchResults(searchValue, list) {
-  const mapBoxApiKey = `pk.eyJ1Ijoia2x1b25nODgiLCJhIjoiY2thNWlsejBzMDBpaTNkcWYwZ3VmbjF0ZCJ9.Dt-l5W_looV6UXMeDr905w`;
-  const boundBox = `-97.325875,49.766204,-96.953987,49.99275`;
-
-  fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${searchValue}.json?access_token=${mapBoxApiKey}&limit=10&bbox=${boundBox}`)
-    .then(resp => resp.json())
-    .then(results => {
-      results.features.forEach(result => {
-        displayResults(result, list);
-      });
-    });
-};
-
-function displayResults(searchResults, list) {
-  if (list === `originsList`) {
-    originsList.insertAdjacentHTML(`beforeend`, `
-  <li data-long="${searchResults.geometry.coordinates[0]}" data-lat="${searchResults.geometry.coordinates[1]}" class="">
-    <div class="name">${searchResults.text}</div>
-   <div>${searchResults.properties.address}</div>
-  </li>  
-  `)
-  } else {
-    destinationsList.insertAdjacentHTML(`beforeend`, `
-    <li data-long="${searchResults.geometry.coordinates[0]}" data-lat="${searchResults.geometry.coordinates[1]}" class="">
-      <div class="name">${searchResults.text}</div>
-      <div>${searchResults.properties.address}</div>
-    </li>  
-    `)
-  };
+  });
 };
