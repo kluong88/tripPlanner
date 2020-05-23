@@ -27,7 +27,6 @@ function getSearchResults(searchValue, list) {
   fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${searchValue}.json?access_token=${mapBoxApiKey}&limit=10&bbox=${boundBox}`)
     .then(resp => resp.json())
     .then(results => {
-      console.log(results);
       results.features.forEach(result => {
         displayResults(result, list);
       });
