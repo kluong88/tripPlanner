@@ -35,20 +35,20 @@ function getSearchResults(searchValue, list) {
 
 function displayResults(searchResults, list) {
   const formattedAddress = searchResults.place_name.split(`,`);
-  formattedAddress.shift();
+  formattedAddress.shift(); // Remove first index of split array (Name of location) in order to prevent bug where location name display's twice
 
   if (list === `originsList`) {
     originsList.insertAdjacentHTML(`beforeend`, `
   <li data-long="${searchResults.geometry.coordinates[0]}" data-lat="${searchResults.geometry.coordinates[1]}" class="">
     <div class="name">${searchResults.text}</div>
-    <div>${searchResults.properties.address ?searchResults.properties.address :formattedAddress.join(`,`) }</div>
+    <div>${searchResults.properties.address ? searchResults.properties.address:formattedAddress.join(`,`)}</div>
   </li>  
   `)
   } else {
     destinationsList.insertAdjacentHTML(`beforeend`, `
     <li data-long="${searchResults.geometry.coordinates[0]}" data-lat="${searchResults.geometry.coordinates[1]}" class="">
       <div class="name">${searchResults.text}</div>
-      <div>${searchResults.properties.address ?searchResults.properties.address :formattedAddress.join(`,`) }</div>
+      <div>${searchResults.properties.address ? searchResults.properties.address:formattedAddress.join(`,`)}</div>
     </li>  
     `)
   };
@@ -57,6 +57,7 @@ function displayResults(searchResults, list) {
 body.onclick = event => {
   const originsEle = originsList.querySelectorAll(`li`);
   const destinationEle = destinationsList.querySelectorAll(`li`);
+
 
   if (event.target.closest(`LI`) && event.target.closest(`UL`).className === `origins`) {
     originsEle.forEach(element => element.className = ` `);
@@ -84,13 +85,12 @@ planTripBtn.onclick = event => {
 
 function getDirections(directions) {
   const myTrip = document.querySelector(`.my-trip`);
-
   myTrip.innerHTML = ` `;
 
   directions.plans[0].segments.forEach(plan => {
     if (plan.type === `walk` && plan.to.stop != undefined) {
       myTrip.insertAdjacentHTML(`beforeend`, `
-      <li><i class="fas fa-walking" aria-hidden="true"></i>Walk for ${plan.times.durations.walking} minutes to stop #${plan.to.stop.key} - ${plan.to.stop.name}</li>
+      <li><i class="fas fa-walking" aria-hidden="true"></i>Walk for ${plan.times.durations.walking} minutes to stop #${plan.to.stop.key} - ${plan.to.stop.name}.</li>
       `)
     } else if (plan.type === `walk` && plan.to.stop === undefined) {
       myTrip.insertAdjacentHTML(`beforeend`, `
@@ -101,7 +101,7 @@ function getDirections(directions) {
       <li><i class="fas fa-ticket-alt" aria-hidden="true"></i>Transfer from stop #${plan.from.stop.key} - ${plan.from.stop.name} to stop #${plan.to.stop.key} - ${plan.to.stop.name}.</li>`)
     } else if (plan.type === `ride`) {
       myTrip.insertAdjacentHTML(`beforeend`, `
-      <li><i class="fas fa-bus" aria-hidden="true"></i>Ride the ${plan.route.name? plan.route.name : BLUE} for ${plan.times.durations.riding} minutes.</li>`)
+      <li><i class="fas fa-bus" aria-hidden="true"></i>Ride the ${plan.route.name? plan.route.name : plan.variant.name} for ${plan.times.durations.riding} minutes.</li>`)
     }
   });
 };

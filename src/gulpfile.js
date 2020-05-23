@@ -1,20 +1,51 @@
-const gulp = require(`gulp`);
-const cleanCSS = require(`gulp-clean-css`);
-const babel = require(`gulp-babel`);
-const uglify = require(`gulp-uglify`);
-const { parallel } = require('gulp');
+const { src, dest, watch, series } = require('gulp');
+const cleanCSS = require('gulp-clean');
+const babel = reuquire('gulp-babel');
+const uglify = require('gulp-uglify');
+const server = require('browser-sync').create();
 
+function js(done) {
+  gulp.src('src/js/app.js')
+    .pipe(babel({
+      presets: ['@babel/env']
+    }))
+    .pipe(uglify)
+    .pipe(dest('dist/app.js'));
+  done();
+}
 
-function compressCSS() {
-  return gulp.src(`src/css/*.css`)
+function css(done) {
+  src('src/css/style.css')
     .pipe(cleanCSS())
-    .pipe(gulp.dest(`dist/css`));
+    .pipe(dest('dist/css'));
+  done();
 }
 
-function compressJS() {
-  return gulp.src(`src/js/*.js`)
-    .pipe(babel({ presets: ['@babel/env'] }))
-    .pipe(uglify())
-    .pipe(gulp.dest(`dist/js`));
+function reload(done) {
+  server.reload();
+  done();
 }
-exports.default = parallel(compressCSS, compressJS);
+
+function html(done) {
+  src('src/index.html')
+    .pipe
+
+  done();
+}
+
+function serve(done) {
+  server.init({
+    server: {
+      baseDir: './dist'
+    }
+  });
+  done();
+}
+
+function watching() {
+  watch('src/css/*.css', series(css, reload));
+  watch('src/js/*.js', series(js, reload));
+  watch('src/index.html', series(html, reload));
+}
+
+exports.default = series(js, html, css, serve, watch);
