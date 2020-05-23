@@ -34,18 +34,21 @@ function getSearchResults(searchValue, list) {
 };
 
 function displayResults(searchResults, list) {
+  const formattedAddress = searchResults.place_name.split(`,`);
+  formattedAddress.shift();
+
   if (list === `originsList`) {
     originsList.insertAdjacentHTML(`beforeend`, `
   <li data-long="${searchResults.geometry.coordinates[0]}" data-lat="${searchResults.geometry.coordinates[1]}" class="">
     <div class="name">${searchResults.text}</div>
-    <div>${searchResults.properties.address ?searchResults.properties.address : searchResults.place_name }</div>
+    <div>${searchResults.properties.address ?searchResults.properties.address :formattedAddress.join(`,`) }</div>
   </li>  
   `)
   } else {
     destinationsList.insertAdjacentHTML(`beforeend`, `
     <li data-long="${searchResults.geometry.coordinates[0]}" data-lat="${searchResults.geometry.coordinates[1]}" class="">
       <div class="name">${searchResults.text}</div>
-      <div>${searchResults.properties.address}</div>
+      <div>${searchResults.properties.address ?searchResults.properties.address :formattedAddress.join(`,`) }</div>
     </li>  
     `)
   };
@@ -82,6 +85,8 @@ planTripBtn.onclick = event => {
 function getDirections(directions) {
   const myTrip = document.querySelector(`.my-trip`);
 
+  myTrip.innerHTML = ` `;
+
   directions.plans[0].segments.forEach(plan => {
     if (plan.type === `walk` && plan.to.stop != undefined) {
       myTrip.insertAdjacentHTML(`beforeend`, `
@@ -95,8 +100,8 @@ function getDirections(directions) {
       myTrip.insertAdjacentHTML(`beforeend`, `
       <li><i class="fas fa-ticket-alt" aria-hidden="true"></i>Transfer from stop #${plan.from.stop.key} - ${plan.from.stop.name} to stop #${plan.to.stop.key} - ${plan.to.stop.name}.</li>`)
     } else if (plan.type === `ride`) {
-      myTrip.insertAdjacentHTML(`beforened`, `
-      <li><i class="fas fa-bus" aria-hidden="true"></i>Ride the ${plan.route.name} for ${plan.times.durations.riding} minutes.</li>`)
+      myTrip.insertAdjacentHTML(`beforeend`, `
+      <li><i class="fas fa-bus" aria-hidden="true"></i>Ride the ${plan.route.name? plan.route.name : BLUE} for ${plan.times.durations.riding} minutes.</li>`)
     }
   });
 };
