@@ -27,6 +27,7 @@ function getSearchResults(searchValue, list) {
   fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${searchValue}.json?access_token=${mapBoxApiKey}&limit=10&bbox=${boundBox}`)
     .then(resp => resp.json())
     .then(results => {
+      console.log(results);
       results.features.forEach(result => {
         displayResults(result, list);
       });
@@ -38,7 +39,7 @@ function displayResults(searchResults, list) {
     originsList.insertAdjacentHTML(`beforeend`, `
   <li data-long="${searchResults.geometry.coordinates[0]}" data-lat="${searchResults.geometry.coordinates[1]}" class="">
     <div class="name">${searchResults.text}</div>
-   <div>${searchResults.properties.address}</div>
+    <div>${searchResults.properties.address ?searchResults.properties.address : searchResults.place_name }</div>
   </li>  
   `)
   } else {
@@ -73,7 +74,6 @@ planTripBtn.onclick = event => {
       .then(resp => resp.json())
       .then(directions => {
         getDirections(directions);
-        console.log(directions);
       })
   } else {
     alert(`Please select an origin and destination and try again!`);
