@@ -42,12 +42,34 @@ planTripBtn.onclick = event => {
     fetch(`https://api.winnipegtransit.com/v3/trip-planner.json?origin=geo/${selected[0].dataset.lat},${selected[0].dataset.long}&api-key=${transitApiKey}&destination=geo/${selected[1].dataset.lat},${selected[1].dataset.long}`)
       .then(resp => resp.json())
       .then(directions => {
-
+        getDirections(directions);
         console.log(directions);
       })
   } else {
     alert(`Please select an origin and destination and try again!`);
   };
+};
+
+function getDirections(directions) {
+
+  directions.plans[0].segments.forEach(plan => {
+    // const startTime = new Date(plan.times.start);
+    // const endTime = new Date(plan.times.end);
+    // const timeElapsed = (endTime.getMinutes() - startTime.getMinutes());
+
+    if (plan.type === `walk` && plan.to.stop != undefined) {
+      console.log(plan);
+      console.log(`Walk ${plan.times.durations.walking} minutes to stop #${plan.to.stop.key} - ${plan.to.stop.name} `)
+    } else if (plan.type === `walk` && plan.to.stop === undefined) {
+      console.log(plan);
+      console.log(`Walk ${plan.times.durations.walking} minutes to your destination.`)
+    } else if (plan.type === `transfer`) {
+      console.log(plan);
+    } else if (plan.type === `ride`) {
+      console.log(plan);
+    }
+  })
+
 };
 
 function getSearchResults(searchValue, list) {
