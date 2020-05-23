@@ -1,0 +1,32 @@
+{
+  "name": "kevinluong-final_project",
+  "version": "1.0.0",
+  "description": "Trip Planner",
+  "main": "js/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kluong88/tripPlanner.git"
+  },
+  "keywords": [
+    "trip",
+    "plan",
+    "schedule",
+    "bus",
+    "javascript"
+  ],
+  "author": "Kevin Luong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kluong88/tripPlanner/issues"
+  },
+  "homepage": "https://github.com/kluong88/tripPlanner#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-imagemin": "^7.1.0",
+    "gulp-uglify": "^3.0.2"
+  }
+}
