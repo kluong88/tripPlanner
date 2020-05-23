@@ -65,8 +65,10 @@ function getDirections(directions) {
       console.log(`Walk ${plan.times.durations.walking} minutes to your destination.`)
     } else if (plan.type === `transfer`) {
       console.log(plan);
+      console.log(`Transfer from stop #${plan.from.stop.key} - ${plan.from.stop.name} to stop #${plan.to.stop.key} - ${plan.to.stop.name}.`)
     } else if (plan.type === `ride`) {
       console.log(plan);
+      console.log(`Ride the ${plan.route.name} for ${plan.times.durations.riding} minutes.`)
     }
   })
 
